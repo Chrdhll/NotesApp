@@ -10,7 +10,7 @@ import com.fadhil.bukucatatan.DetailNotesActivity
 import com.fadhil.bukucatatan.R
 import com.fadhil.bukucatatan.model.Note
 
-class noteAdapter (private val notes: List<Note>) : RecyclerView.Adapter<noteAdapter.NoteViewHolder>() {
+class noteAdapter (private var notes: List<Note>) : RecyclerView.Adapter<noteAdapter.NoteViewHolder>() {
     class NoteViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title = itemView.findViewById<TextView>(R.id.txtjudul)
         val content = itemView.findViewById<TextView>(R.id.txtdeskripsi)
@@ -38,5 +38,11 @@ class noteAdapter (private val notes: List<Note>) : RecyclerView.Adapter<noteAda
             }
             context.startActivity(intent)
         }
+    }
+
+    //fungsi untuk auto refresh list
+    fun refreshData(newNotes : List<Note>){
+        notes = newNotes
+        notifyDataSetChanged()
     }
 }

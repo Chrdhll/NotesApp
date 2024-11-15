@@ -42,13 +42,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume(){
         super.onResume()
         displayNotes()
+
     }
 
 
     private fun displayNotes() {
        val notes = db.getAllNotes()
         binding.noteRecyclerView.adapter = noteAdapter(notes)
-        binding.noteRecyclerView.layoutManager=GridLayoutManager(this,2)
+        binding.noteRecyclerView.layoutManager=LinearLayoutManager(this)
     }
 
 

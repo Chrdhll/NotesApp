@@ -16,6 +16,7 @@ import com.fadhil.bukucatatan.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var db: NoteDatabaseHelper
+    private lateinit var notesAdapter : noteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +26,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = NoteDatabaseHelper(this)
-        displayNotes()
+        notesAdapter = noteAdapter(db.getAllNotes(),this)
+
+        binding.noteRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.noteRecyclerView.adapter = notesAdapter
 
 
         binding.addButton.setOnClickListener(){
@@ -41,16 +45,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume(){
         super.onResume()
-        displayNotes()
+        val notes = db.getAllNotes()
+        notesAdapter.refreshData(notes)
 
     }
 
-
-    private fun displayNotes() {
-       val notes = db.getAllNotes()
-        binding.noteRecyclerView.adapter = noteAdapter(notes)
-        binding.noteRecyclerView.layoutManager=LinearLayoutManager(this)
-    }
 
 
 }

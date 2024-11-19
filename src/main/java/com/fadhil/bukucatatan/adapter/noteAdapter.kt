@@ -1,19 +1,29 @@
 package com.fadhil.bukucatatan.adapter
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.fadhil.bukucatatan.DetailNotesActivity
 import com.fadhil.bukucatatan.R
+import com.fadhil.bukucatatan.database.NoteDatabaseHelper
 import com.fadhil.bukucatatan.model.Note
+import com.fadhil.bukucatatan.update_note_activity
 
-class noteAdapter (private var notes: List<Note>) : RecyclerView.Adapter<noteAdapter.NoteViewHolder>() {
+class noteAdapter (private var notes: List<Note> ,context: Context) : RecyclerView.Adapter<noteAdapter.NoteViewHolder>() {
+    private val db: NoteDatabaseHelper = NoteDatabaseHelper(context)
+
     class NoteViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title = itemView.findViewById<TextView>(R.id.txtjudul)
         val content = itemView.findViewById<TextView>(R.id.txtdeskripsi)
+        val updatebutton = itemView.findViewById<ImageView>(R.id.updatebutton)
+        val deletebutton = itemView.findViewById<ImageView>(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -38,6 +48,31 @@ class noteAdapter (private var notes: List<Note>) : RecyclerView.Adapter<noteAda
             }
             context.startActivity(intent)
         }
+
+        holder.updatebutton.setOnClickListener(){
+            val intent = Intent(holder.itemView.context,update_note_activity::class.java).apply {
+                putExtra("note_id",note.id)
+            }
+            holder.itemView.context.startActivity(intent)
+        }
+
+        holder.deletebutton.setOnClickListener(){
+            AlertDialog.Builder(holder.itemView.context).apply {
+                setTitle("Konfirmasi")
+                setMessage("Apakah anda ingin melanjutkan?")
+
+                setPositiveButton("Yakin"){dialogInterface, i ->
+                    db.deleteNote(note.id) // Hapus catatan berdasarkan ID
+                    refreshData(db.getAllNotes()) // Perbarui daftar catatan
+                }
+
+                setNegativeButton("Batal"){dialogInterface, i->
+                    dialogInterface.dismiss()
+                }
+            }.show()
+        }
+
+
     }
 
     //fungsi untuk auto refresh list
